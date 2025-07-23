@@ -1,0 +1,7 @@
+.env
+
+node_modules/
+dist/
+tests/
+**/__pycache__
+scripts/
