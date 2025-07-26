@@ -56,6 +56,5 @@ DorksAPI uses Prisma to manage user data. The `prisma` module exports a `PRISMA`
 * `frida`: Frida framework
 * `crypto-js`: CryptoJS library
 * `dotenv`: Dotenv library
-* `telegraf`: Telegraf library
 
 Note: This is just a draft, and you should update the README.md to reflect the actual functionality and features of your project.
