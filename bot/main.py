@@ -1,8 +1,7 @@
 from dotenv import load_dotenv
-load_dotenv()
 from asyncio import get_event_loop
-
-from src.bot import TelegramBot
+load_dotenv()
+from src.bot import TelegramBot  # noqa: E402
 
 
 async def main():

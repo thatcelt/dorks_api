@@ -13,6 +13,7 @@ from msgspec.json import (
 from src.models.user import User
 from src.constants import REQUEST_HEADERS
 
+
 def add_user(user_id: int, is_active: bool) -> User | None:
     response = post(
         url=f"{environ.get('API_URL')}/users/add",
@@ -23,6 +24,7 @@ def add_user(user_id: int, is_active: bool) -> User | None:
         return
 
     return decode(encode(response.json()["user"]), type=User)
+
 
 def get_user(user_id: int) -> User | None:
     response = get(
@@ -35,13 +37,16 @@ def get_user(user_id: int) -> User | None:
 
     return decode(encode(response.json()["user"]), type=User)
 
+
 def set_is_active(user_id: int, is_active: bool) -> User | None:
     response = post(
-        url=f"{environ.get('API_URL')}/users/setActivity/{str(is_active).lower()}",
+        url=(
+            f"{environ.get('API_URL')}",
+            f"/users/setActivity/{str(is_active).lower()}"
+        ),
         data=encode({"userId": str(user_id)}),
         headers=REQUEST_HEADERS
     )
-    print(response.content)
     if response.status_code != 200:
         return
 

@@ -7,7 +7,12 @@ from aiogram.types import (
 
 SUBSCRIBE_LINK_MARKUP = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="🔗 Ссылка/Link", url=environ.get("CHANNEL_URL"))]
+        [
+            InlineKeyboardButton(
+                text="🔗 Ссылка/Link",
+                url=environ.get("CHANNEL_URL")
+            )
+        ]
     ]
 )
 

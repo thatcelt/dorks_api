@@ -3,6 +3,7 @@ from msgspec import (
     field
 )
 
+
 class User(Struct):
     user_id: str = field(name="id")
     is_active: bool = field(name="isActive")
@@ -10,4 +11,3 @@ class User(Struct):
 
 
 __all__ = ["User"]
-

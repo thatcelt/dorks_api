@@ -31,6 +31,7 @@ from src.resources.locales import (
 
 start_router = Router()
 
+
 async def is_subscribed(bot: Bot, user_id: int) -> bool:
     if (await bot.get_chat_member(
         chat_id=environ.get("CHANNEL_ID"),
@@ -41,23 +42,23 @@ async def is_subscribed(bot: Bot, user_id: int) -> bool:
 
 
 @start_router.message(Command("start"))
-async def on_start_callback(message: Message):    
+async def on_start_callback(message: Message):
     if not await is_subscribed(message.bot, message.from_user.id):
         await message.answer(
             text=SUBSCRIBE_WARNING,
             reply_markup=SUBSCRIBE_LINK_MARKUP
         )
         return
-    
+
     user_data = get_user(message.from_user.id)
     if not user_data:
         user_data = add_user(message.from_user.id, True)
 
     await message.answer(text=PROFILE_TEXT.format(api_key=user_data.api_key))
 
+
 @start_router.chat_member(ChatMemberUpdatedFilter(JOIN_TRANSITION))
 async def on_join_callback(chat_member_updated: ChatMemberUpdated):
-    print(chat_member_updated.from_user.id)
     user_data = set_is_active(chat_member_updated.from_user.id, True)
     if not user_data:
         user_data = add_user(chat_member_updated.from_user.id, True)
@@ -67,6 +68,7 @@ async def on_join_callback(chat_member_updated: ChatMemberUpdated):
         chat_id=chat_member_updated.from_user.id
 
     )
+
 
 @start_router.chat_member(ChatMemberUpdatedFilter(LEAVE_TRANSITION))
 async def on_left_callback(chat_member_updated: ChatMemberUpdated):
