@@ -1,5 +1,4 @@
 import fp from 'fastify-plugin';
-
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { RESPONSE_TOPICS, USERS_CACHE } from '../constants';
 

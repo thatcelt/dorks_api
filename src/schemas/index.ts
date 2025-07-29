@@ -19,7 +19,7 @@ export const generateHMACSchema: FastifySchema = {
         },
         required: ['payload']
     }
-}
+};
 
 export const GenerateECDSASchema: FastifySchema = {
     body: {
@@ -30,7 +30,7 @@ export const GenerateECDSASchema: FastifySchema = {
         },
         required: ['userId', 'payload']
     }
-}
+};
 
 export const setActivitySchema: FastifySchema = {
     params: {

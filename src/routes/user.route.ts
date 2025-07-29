@@ -7,4 +7,4 @@ export const userRoutes = (app: FastifyInstance) => {
     app.post<{ Body: AddUserRequestBody }>('/add', { preHandler: [app.adminAuthenticate], schema: addUserSchema }, addUser);
     app.post<{ Body: SetActivityRequestBody, Params: SetActivityParams }>('/setActivity/:isActive', { preHandler: [app.adminAuthenticate], schema: setActivitySchema }, setActivity)
     app.get<{ Params: GetUserParams }>('/get/:userId', { preHandler: [app.adminAuthenticate], schema: getUserSchema }, getUser);
-}
+};

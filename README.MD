@@ -16,21 +16,22 @@ DorksAPI is a RESTful API built with Fastify, Prisma, and Frida. It provides end
 
 To get started with DorksAPI, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/dorksapi.git`
-2. Install dependencies: `npm install` or `yarn install`
-3. Start the server: `npm start` or `yarn start`
+1. Clone the repository: `git clone https://github.com/thatcelt/dorks_api.git`
+2. Install dependencies: `npm install` or `yarn install` and globally install `npm install typescript` or `yarn install typescript`
+3. Start the server: `npm run` or `yarn run`
 
 ## Endpoints
 
 ### Signature Endpoints
 
+* `GET /api/v1/signature/credentials/:userId` Get credentials to update public key
 * `POST /api/v1/signature/hmac`: Generate an HMAC signature
 * `POST /api/v1/signature/ecdsa`: Generate an ECDSA signature
 
 ### User Endpoints
 
-* `POST /api/v1/users/add`: Add a new user
 * `GET /api/v1/users/get/:userId`: Get a user by ID
+* `POST /api/v1/users/add`: Add a new user
 * `POST /api/v1/users/setActivity/:isActive`: Set a user's activity status
 
 ## Signature Generation
@@ -52,6 +53,7 @@ DorksAPI uses Prisma to manage user data. The `prisma` module exports a `PRISMA`
 ## Dependencies
 
 * `fastify`: Fastify framework
+* `uuid` UUID system
 * `prisma`: Prisma database
 * `frida`: Frida framework
 * `crypto-js`: CryptoJS library

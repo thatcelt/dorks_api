@@ -5,6 +5,7 @@
     /* Modules */
     "module": "nodenext",
     "resolveJsonModule": true,
+    "typeRoots": ["src/global.d.ts"],
 
     /* JavaScript Support */
     "allowJs": true,

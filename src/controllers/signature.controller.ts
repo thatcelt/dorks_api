@@ -1,29 +1,49 @@
-import { FastifyReply } from "fastify";
-import { GenerateECDSARequest, GenerateHMACRequest } from "./types";
-import { signECDSA, signHMAC, hasAlias, createKeyPair } from "../utils/resolveFrida";
-import { ENCODER } from "../constants";
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { GenerateECDSARequest, GenerateHMACRequest, GetPublicKeyCredentialsParams } from './types';
+import { signECDSA, signHMAC, hasAlias, createKeyPair, getCertificateChain } from '../utils/resolveFrida';
+import { ENCODER, RESPONSE_TOPICS } from '../constants';
+import { validate } from 'uuid';
 
 
 export async function generateHMAC(req: GenerateHMACRequest, reply: FastifyReply) {
     try {
         const generatedHMAC = await signHMAC(ENCODER.encode(req.body.payload));
 
-        return reply.status(200).send({ message: "OK", hmac: generatedHMAC });
+        return reply.status(200).send({ message: RESPONSE_TOPICS.OK, hmac: generatedHMAC });
     } catch (error) {
         console.error(error);
-        return reply.status(400).send({ message: "BAD_REQUEST", details: error });
-    }
-}
+        return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST, details: error });
+    };
+};
 
 export async function generateECDSA(req: GenerateECDSARequest, reply: FastifyReply) {
-    if (!hasAlias(req.body.userId)) await createKeyPair(req.body.userId);
+    if (!hasAlias(req.body.userId)) return reply.status(403).send({ message: RESPONSE_TOPICS.FORBIDDEN });
     
     try {
         const generatedECDSA = await signECDSA(ENCODER.encode(req.body.payload), req.body.userId);
 
-        return reply.status(200).send({ message: "OK", ECDSA: generatedECDSA });
+        return reply.status(200).send({ message: RESPONSE_TOPICS.OK, ECDSA: generatedECDSA });
     } catch (error) {
         console.error(error);
-        return reply.status(400).send({ message: "BAD_REQUEST", details: error });
-    }
-}
+        return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST, details: error });
+    };
+};
+
+export async function getPublicKeyCredentials(req: FastifyRequest<{Params: GetPublicKeyCredentialsParams}>, reply: FastifyReply) {
+    if (!validate(req.params.userId)) return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST });
+    if (!hasAlias(req.params.userId)) await createKeyPair(req.params.userId);
+
+    try {
+        return reply.status(200).send({
+            message: RESPONSE_TOPICS.OK,
+            credentials: {
+                key_chain: await getCertificateChain(req.params.userId),
+                token: process.env.PLAY_INTEGRITY_TOKEN,
+                timestamp: Math.floor(Date.now() / 1000) * 1000,
+                uid: req.params.userId
+            }
+        });
+    } catch (error) {
+        return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST, details: error });
+    };
+};

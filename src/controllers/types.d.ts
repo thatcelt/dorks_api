@@ -2,6 +2,7 @@ import { FastifyRequest } from 'fastify';
 
 export type SetActivityParams = { isActive: boolean }
 export type GetUserParams = {  userId: string }
+export type GetPublicKeyCredentialsParams = { userId: string }
 
 export interface AddUserRequestBody {
     userId: string;
