@@ -34,7 +34,7 @@ export const FASTIFY_RATE_LIMIT_CONFIG: RateLimitPluginOptions = {
 
 export const FASTIFY_RATE_LIMIT_CONFIG_GLOBAL: RateLimitPluginOptions = {
     global: false,
-    errorResponseBuilder(req, context) {
+    errorResponseBuilder(_, context) {
         return {
             message: RESPONSE_TOPICS.TOO_MANY_REQUESTS,
             expiresIn: context.ttl
