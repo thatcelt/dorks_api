@@ -39,7 +39,7 @@ export async function getPublicKeyCredentials(req: FastifyRequest<{Params: GetPu
             credentials: {
                 key_chain: await getCertificateChain(req.params.userId),
                 token: process.env.PLAY_INTEGRITY_TOKEN,
-                timestamp: Math.floor(Date.now() / 1000) * 1000,
+                timestamp: Date.now(),
                 uid: req.params.userId
             }
         });
