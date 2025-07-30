@@ -22,14 +22,6 @@ export interface SetActivityRequest extends FastifyRequest {
     params: SetActivityParams
 }
 
-export interface GenerateHMACRequestBody {
-    payload: string;
-}
-
-export interface GenerateHMACRequest extends FastifyRequest {
-    body: GenerateHMACRequestBody
-}
-
 export interface GenerateECDSARequestBody {
     userId: string;
     payload: string;

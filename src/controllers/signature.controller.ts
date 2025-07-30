@@ -1,20 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { GenerateECDSARequest, GenerateHMACRequest, GetPublicKeyCredentialsParams } from './types';
-import { signECDSA, signHMAC, hasAlias, createKeyPair, getCertificateChain } from '../utils/resolveFrida';
+import { GenerateECDSARequest, GetPublicKeyCredentialsParams } from './types';
+import { signECDSA, hasAlias, createKeyPair, getCertificateChain } from '../utils/resolveFrida';
 import { ENCODER, RESPONSE_TOPICS } from '../constants';
 import { validate } from 'uuid';
-
-
-export async function generateHMAC(req: GenerateHMACRequest, reply: FastifyReply) {
-    try {
-        const generatedHMAC = await signHMAC(ENCODER.encode(req.body.payload));
-
-        return reply.status(200).send({ message: RESPONSE_TOPICS.OK, hmac: generatedHMAC });
-    } catch (error) {
-        console.error(error);
-        return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST, details: error });
-    };
-};
 
 export async function generateECDSA(req: GenerateECDSARequest, reply: FastifyReply) {
     if (!hasAlias(req.body.userId)) return reply.status(403).send({ message: RESPONSE_TOPICS.FORBIDDEN });
