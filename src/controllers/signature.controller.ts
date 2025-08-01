@@ -19,7 +19,7 @@ export async function generateECDSA(req: GenerateECDSARequest, reply: FastifyRep
 
 export async function getPublicKeyCredentials(req: FastifyRequest<{Params: GetPublicKeyCredentialsParams}>, reply: FastifyReply) {
     if (!validate(req.params.userId)) return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST });
-    if (!hasAlias(req.params.userId)) await createKeyPair(req.params.userId);
+    if (!await hasAlias(req.params.userId)) await createKeyPair(req.params.userId);
 
     try {
         return reply.status(200).send({
