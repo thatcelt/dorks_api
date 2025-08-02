@@ -33,3 +33,7 @@ export async function getUser(req: FastifyRequest<{ Params: GetUserParams }>, re
 
     return reply.status(200).send({ message: RESPONSE_TOPICS.OK, user: userData });
 };
+
+export async function ping(_: FastifyRequest, reply: FastifyReply) {
+    return reply.status(200).send('pong');
+}
