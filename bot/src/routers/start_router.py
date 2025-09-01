@@ -15,7 +15,7 @@ from aiogram.filters import (
     LEAVE_TRANSITION
 )
 
-from src.constants import ALLOWED_ROLES
+from src.constants import ALLOWED_ROLES, ALLOWED_USERS
 from src.resources.keyboards import SUBSCRIBE_LINK_MARKUP
 
 from src.utils.api import (
@@ -34,7 +34,7 @@ start_router = Router()
 
 async def is_subscribed(bot: Bot, user_id: int) -> bool:
     if (await bot.get_chat_member(
-        chat_id=environ.get("CHANNEL_ID"),
+        chat_id=str(environ.get("CHANNEL_ID")),
         user_id=user_id
     )).status not in ALLOWED_ROLES:
         return False
@@ -43,11 +43,17 @@ async def is_subscribed(bot: Bot, user_id: int) -> bool:
 
 @start_router.message(Command("start"))
 async def on_start_callback(message: Message):
+    if not message.from_user or not message.bot:
+        return
+
     if not await is_subscribed(message.bot, message.from_user.id):
         await message.answer(
-            text=SUBSCRIBE_WARNING,
+            text=str(SUBSCRIBE_WARNING),
             reply_markup=SUBSCRIBE_LINK_MARKUP
         )
+        return
+
+    if message.from_user.id not in ALLOWED_USERS:
         return
 
     user_data = get_user(message.from_user.id)
@@ -59,7 +65,14 @@ async def on_start_callback(message: Message):
 
 @start_router.chat_member(ChatMemberUpdatedFilter(JOIN_TRANSITION))
 async def on_join_callback(chat_member_updated: ChatMemberUpdated):
-    user_data = set_is_active(chat_member_updated.from_user.id, True)
+    if chat_member_updated.from_user.id not in ALLOWED_USERS or \
+            not chat_member_updated.bot:
+        return
+    try:
+        user_data = set_is_active(chat_member_updated.from_user.id, 'true')
+    except Exception as e:
+        print(e)
+        return
     if not user_data:
         user_data = add_user(chat_member_updated.from_user.id, True)
 
@@ -72,12 +85,15 @@ async def on_join_callback(chat_member_updated: ChatMemberUpdated):
 
 @start_router.chat_member(ChatMemberUpdatedFilter(LEAVE_TRANSITION))
 async def on_left_callback(chat_member_updated: ChatMemberUpdated):
-    user_data = set_is_active(chat_member_updated.from_user.id, False)
+    if chat_member_updated.from_user.id not in ALLOWED_USERS or \
+            not chat_member_updated.bot:
+        return
+    user_data = set_is_active(chat_member_updated.from_user.id, 'false')
     if not user_data:
         user_data = add_user(chat_member_updated.from_user.id, False)
 
     await chat_member_updated.bot.send_message(
-        text=SUBSCRIBE_WARNING,
+        text=str(SUBSCRIBE_WARNING),
         reply_markup=SUBSCRIBE_LINK_MARKUP,
         chat_id=chat_member_updated.from_user.id
     )

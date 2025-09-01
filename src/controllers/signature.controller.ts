@@ -1,15 +1,14 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { GenerateECDSARequest, GetPublicKeyCredentialsParams } from './types';
-import { signECDSA, hasAlias, createKeyPair, getCertificateChain } from '../utils/resolveFrida';
-import { ENCODER, RESPONSE_TOPICS } from '../constants';
+import { signECDSA, hasAlias, createKeyPair, getCertificateChain, getElapsedRealtime } from '../utils/resolveFrida';
+import { RESPONSE_TOPICS } from '../constants';
 import { validate } from 'uuid';
 
 export async function generateECDSA(req: GenerateECDSARequest, reply: FastifyReply) {
     if (!hasAlias(req.body.userId)) return reply.status(403).send({ message: RESPONSE_TOPICS.FORBIDDEN });
     
     try {
-        const generatedECDSA = await signECDSA(ENCODER.encode(req.body.payload), req.body.userId);
-
+        const generatedECDSA = await signECDSA(req.body.payload, req.body.userId);
         return reply.status(200).send({ message: RESPONSE_TOPICS.OK, ECDSA: generatedECDSA });
     } catch (error) {
         console.error(error);
@@ -35,3 +34,7 @@ export async function getPublicKeyCredentials(req: FastifyRequest<{Params: GetPu
         return reply.status(400).send({ message: RESPONSE_TOPICS.BAD_REQUEST, details: error });
     };
 };
+
+export async function getElapsedRealtimeRequest(_req: FastifyRequest, reply: FastifyReply) {
+    return reply.status(200).send({ message: RESPONSE_TOPICS.OK, elapsedRealtime: await getElapsedRealtime() });    
+}

@@ -14,14 +14,12 @@ from src.models.user import User
 from src.constants import REQUEST_HEADERS
 
 
-def add_user(user_id: int, is_active: bool) -> User | None:
+def add_user(user_id: int, is_active: bool) -> User:
     response = post(
         url=f"{environ.get('API_URL')}/users/add",
         data=encode({"userId": str(user_id), "isActive": is_active}),
         headers=REQUEST_HEADERS
     )
-    if response.status_code != 200:
-        return
 
     return decode(encode(response.json()["user"]), type=User)
 
@@ -38,11 +36,10 @@ def get_user(user_id: int) -> User | None:
     return decode(encode(response.json()["user"]), type=User)
 
 
-def set_is_active(user_id: int, is_active: bool) -> User | None:
+def set_is_active(user_id: int, is_active: str) -> User | None:
     response = post(
         url=(
-            f"{environ.get('API_URL')}",
-            f"/users/setActivity/{str(is_active).lower()}"
+            f"{environ.get('API_URL')}/users/setActivity/{is_active}"
         ),
         data=encode({"userId": str(user_id)}),
         headers=REQUEST_HEADERS

@@ -29,6 +29,7 @@ export const hasAlias = async (userId: string) => { return await fridaApi.hasAli
 export const createKeyPair = async (userId: string) => { return await fridaApi.createKeyPair(`auth-keys-${userId}`); };
 export const deleteEntry = async (userId: string) => { return await fridaApi.deleteEntry(`auth-keys-${userId}`); };
 export const getCertificateChain = async (userId: string) => { return await fridaApi.getCertificateChain(`auth-keys-${userId}`); };
-export const signECDSA = async (data: Uint8Array, userId: string) => { return await fridaApi.signECDSA(Array.from(data), `auth-keys-${userId}`); };
+export const signECDSA = async (data: string, userId: string) => { return await fridaApi.signECDSA(data, `auth-keys-${userId}`); };
 export const sendPlayIntegrityToken = async () => { await fridaApi.sendPlayIntegrityToken(); };
+export const getElapsedRealtime = async () => { return await fridaApi.getElapsedRealtime(); };
 export const onMessage = (callback: ScriptMessageHandler) => { script.message.connect(callback); }

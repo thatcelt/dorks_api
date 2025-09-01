@@ -6,13 +6,13 @@ import { RateLimitPluginOptions } from '@fastify/rate-limit';
 
 export const USERS_CACHE: Array<string> = [];
 
-export const APP = fastify();
+export const APP = fastify({ bodyLimit: 5242880 });
 export const PRISMA = new PrismaClient();
 export const ENCODER = new TextEncoder();
 
 export const MAIN_PROCESS = 'Amino';
 export const FRIDA_SCRIPT_PATH = '../scripts/signatures.js';
-export const REFRESH_INTERVAIL_MILLIS = 1800000;
+export const REFRESH_INTERVAIL_MILLIS = 3660000;
 
 export const RESPONSE_TOPICS = {
     USER_ALREADY_EXISTS: 'USER_ALREADY_EXISTS',
@@ -24,7 +24,14 @@ export const RESPONSE_TOPICS = {
 };
 
 export const ON_MESSAGE_HANDLER = (message: Message) => {
-    if (message.type == 'send' && message.payload.token) process.env.PLAY_INTEGRITY_TOKEN = message.payload.token;
+    if (message.type == 'send') {
+        if (message.payload.token) {
+            console.log('[+] Play Integrity Token: ' + message.payload.token);
+            process.env.PLAY_INTEGRITY_TOKEN = message.payload.token;
+        } else if (message.payload.error) {
+            console.log('[-] Play Integrity Token Error: ' + message.payload.error);
+        }
+    }
 };
 
 export const FASTIFY_RATE_LIMIT_CONFIG: RateLimitPluginOptions = {
