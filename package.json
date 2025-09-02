@@ -13,6 +13,7 @@
     "@fastify/rate-limit": "^10.3.0",
     "@prisma/client": "^5.22.0",
     "@types/uuid": "^10.0.0",
+    "adbkit": "^2.11.1",
     "crypto-js": "^4.2.0",
     "dotenv": "^17.2.0",
     "fastify": "^5.4.0",

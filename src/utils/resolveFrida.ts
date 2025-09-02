@@ -2,9 +2,20 @@ import fs from 'fs';
 
 import frida, { Script, ScriptExports, ScriptMessageHandler } from 'frida';
 import { FRIDA_SCRIPT_PATH, MAIN_PROCESS } from '../constants';
+import adbkit, { Adb } from 'adbkit';
 
+const client = (adbkit as unknown as Adb).createClient();
 let fridaApi: ScriptExports;
 let script: Script;
+
+const connectADB = async () => {
+    try {
+        await client.shell((await client.listDevices())[0].id, `su -c ${process.env.FRIDA_SERVER_PATH}`);
+        console.log('[+] ADB connected.');
+    } catch (error) {
+        console.error(`[-] Error connecting to ADB: ${error}`);
+    }
+};
 
 const loadJavaBridge = () => {
     const bridgeSrc = fs.readFileSync('../scripts/java.js', 'utf-8');
@@ -12,6 +23,7 @@ const loadJavaBridge = () => {
 };
 
 export const loadFrida = async () => {
+    await connectADB();
     try {
         const device = await frida.getUsbDevice();
         const session = await device.attach(MAIN_PROCESS);
