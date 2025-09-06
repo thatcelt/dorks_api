@@ -10,11 +10,12 @@ let script: Script;
 
 const connectADB = async () => {
     try {
-        await client.shell((await client.listDevices())[0].id, `su -c ${process.env.FRIDA_SERVER_PATH}`);
-        console.log('[+] ADB connected.');
+        const device = (await client.listDevices())[0].id;
+        await client.shell(device, `su -c ${process.env.FRIDA_SERVER_PATH}`);
+        console.log(`[+] ADB connected to ${device}.`);
     } catch (error) {
         console.error(`[-] Error connecting to ADB: ${error}`);
-    }
+    };
 };
 
 const loadJavaBridge = () => {

@@ -1,7 +1,7 @@
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
 import { config } from 'dotenv';
-config()
+config({ path: '../.env' })
 
 import userMiddleware from './middlewares/user.middleware';
 import signatureMiddleware from './middlewares/signature.middleware';
@@ -23,7 +23,7 @@ APP.addHook('onReady', onReadyHook);
 
 const start = async () => {
     await loadFrida();
-    await APP.listen({ port: 3000 });
+    await APP.listen({ port: 3000, host: '0.0.0.0' });
     onMessage(ON_MESSAGE_HANDLER);
     console.log('[+] Server started.');
 };
