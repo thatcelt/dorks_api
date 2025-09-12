@@ -1,5 +1,8 @@
 from os import environ
 
+from src.models.user import User
+from src.constants import REQUEST_HEADERS
+
 from requests import (
     get,
     post
@@ -10,9 +13,6 @@ from msgspec.json import (
     encode
 )
 
-from src.models.user import User
-from src.constants import REQUEST_HEADERS
-
 
 def add_user(user_id: int, is_active: bool) -> User:
     response = post(
@@ -22,6 +22,16 @@ def add_user(user_id: int, is_active: bool) -> User:
     )
 
     return decode(encode(response.json()["user"]), type=User)
+
+
+def block_user(user_id: int = None, uid: str = None) -> bool:
+    response = post(
+        url=f"{environ.get('API_URL')}/users/block",
+        data=encode({"userId": user_id, "uid": uid}),
+        headers=REQUEST_HEADERS
+    )
+
+    return response.status_code == 200
 
 
 def get_user(user_id: int) -> User | None:

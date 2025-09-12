@@ -11,6 +11,17 @@ export const addUserSchema: FastifySchema = {
     }
 };
 
+export const blockUserSchema: FastifySchema = {
+    body: {
+        type: 'object',
+        properties: {
+            userId: { type: 'string' },
+            uid: { type: 'string' }
+        },
+        required: []
+    }
+};
+
 export const generateHMACSchema: FastifySchema = {
     body: {
         type: 'object',

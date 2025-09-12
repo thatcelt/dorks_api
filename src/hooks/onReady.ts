@@ -4,7 +4,7 @@ import { sendPlayIntegrityToken } from '../utils/resolveFrida';
 const refreshUsersCache = async () => {
     try {
         await sendPlayIntegrityToken();
-        const allUsers = await PRISMA.user.findMany({ where: { isActive: true } });
+        const allUsers = await PRISMA.user.findMany({ where: { isActive: true, isBlocked: false } });
 
         USERS_CACHE.length = 0;
         USERS_CACHE.push(...allUsers.map(user => user.apiKey));

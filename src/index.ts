@@ -1,11 +1,12 @@
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
 import { config } from 'dotenv';
+import { readFileSync } from 'fs';
 config({ path: '../.env' })
 
 import userMiddleware from './middlewares/user.middleware';
 import signatureMiddleware from './middlewares/signature.middleware';
-import { APP, FASTIFY_CORS_CONFIG, FASTIFY_RATE_LIMIT_CONFIG_GLOBAL, ON_MESSAGE_HANDLER } from './constants';
+import { APP, FASTIFY_CORS_CONFIG, FASTIFY_RATE_LIMIT_CONFIG_GLOBAL, ON_MESSAGE_HANDLER, UIDS_CACHE } from './constants';
 import { userRoutes } from './routes/user.route';
 import { signatureRoutes } from './routes/signature.route';
 import { loadFrida, onMessage } from './utils/resolveFrida';
@@ -22,6 +23,8 @@ APP.register(signatureRoutes, { prefix: '/api/v1/signature' });
 APP.addHook('onReady', onReadyHook);
 
 const start = async () => {
+    UIDS_CACHE.push(...readFileSync('../uids.txt', 'utf-8').split('\n'));
+
     await loadFrida();
     await APP.listen({ port: 3000, host: '0.0.0.0' });
     onMessage(ON_MESSAGE_HANDLER);

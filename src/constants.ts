@@ -5,6 +5,7 @@ import { Message } from 'frida';
 import { RateLimitPluginOptions } from '@fastify/rate-limit';
 
 export const USERS_CACHE: Array<string> = [];
+export const UIDS_CACHE: Array<string> = [];
 
 export const APP = fastify({ bodyLimit: 5242880 });
 export const PRISMA = new PrismaClient();
@@ -35,7 +36,7 @@ export const ON_MESSAGE_HANDLER = (message: Message) => {
 };
 
 export const FASTIFY_RATE_LIMIT_CONFIG: RateLimitPluginOptions = {
-    max: 5,
+    max: 10,
     timeWindow: 300000
 };
 

@@ -7,26 +7,35 @@ export type GetPublicKeyCredentialsParams = { userId: string }
 export interface AddUserRequestBody {
     userId: string;
     isActive: boolean;
-}
+};
 
 export interface AddUserRequest extends FastifyRequest {
     body: AddUserRequestBody
-}
+};
+
+export interface BlockUserRequestBody {
+    userId?: string
+    uid?: string
+};
+
+export interface BlockUserRequest extends FastifyRequest {
+    body: BlockUserRequestBody
+};
 
 export interface SetActivityRequestBody {
     userId: string;
-}
+};
 
 export interface SetActivityRequest extends FastifyRequest {
     body: SetActivityRequestBody
     params: SetActivityParams
-}
+};
 
 export interface GenerateECDSARequestBody {
     userId: string;
     payload: string;
-}
+};
 
 export interface GenerateECDSARequest extends FastifyRequest {
     body: GenerateECDSARequestBody
-}
+};

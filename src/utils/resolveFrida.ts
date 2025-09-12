@@ -45,4 +45,4 @@ export const getCertificateChain = async (userId: string) => { return await frid
 export const signECDSA = async (data: string, userId: string) => { return await fridaApi.signECDSA(data, `auth-keys-${userId}`); };
 export const sendPlayIntegrityToken = async () => { await fridaApi.sendPlayIntegrityToken(); };
 export const getElapsedRealtime = async () => { return await fridaApi.getElapsedRealtime(); };
-export const onMessage = (callback: ScriptMessageHandler) => { script.message.connect(callback); }
+export const onMessage = (callback: ScriptMessageHandler) => { script.message.connect(callback); };

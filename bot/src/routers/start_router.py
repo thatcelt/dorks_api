@@ -1,6 +1,9 @@
 from os import environ
 from aiogram.filters.command import Command
 
+from src.constants import ALLOWED_ROLES
+from src.resources.keyboards import SUBSCRIBE_LINK_MARKUP
+
 from aiogram.types import (
     Message,
     ChatMemberUpdated
@@ -14,9 +17,6 @@ from aiogram.filters import (
     JOIN_TRANSITION,
     LEAVE_TRANSITION
 )
-
-from src.constants import ALLOWED_ROLES, ALLOWED_USERS
-from src.resources.keyboards import SUBSCRIBE_LINK_MARKUP
 
 from src.utils.api import (
     get_user,
@@ -53,9 +53,6 @@ async def on_start_callback(message: Message):
         )
         return
 
-    if message.from_user.id not in ALLOWED_USERS:
-        return
-
     user_data = get_user(message.from_user.id)
     if not user_data:
         user_data = add_user(message.from_user.id, True)
@@ -65,8 +62,7 @@ async def on_start_callback(message: Message):
 
 @start_router.chat_member(ChatMemberUpdatedFilter(JOIN_TRANSITION))
 async def on_join_callback(chat_member_updated: ChatMemberUpdated):
-    if chat_member_updated.from_user.id not in ALLOWED_USERS or \
-            not chat_member_updated.bot:
+    if not chat_member_updated.bot or chat_member_updated.from_user.bot:
         return
     try:
         user_data = set_is_active(chat_member_updated.from_user.id, 'true')
@@ -85,8 +81,7 @@ async def on_join_callback(chat_member_updated: ChatMemberUpdated):
 
 @start_router.chat_member(ChatMemberUpdatedFilter(LEAVE_TRANSITION))
 async def on_left_callback(chat_member_updated: ChatMemberUpdated):
-    if chat_member_updated.from_user.id not in ALLOWED_USERS or \
-            not chat_member_updated.bot:
+    if not chat_member_updated.bot or chat_member_updated.from_user.bot:
         return
     user_data = set_is_active(chat_member_updated.from_user.id, 'false')
     if not user_data:
