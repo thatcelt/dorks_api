@@ -1,11 +1,34 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { GenerateECDSARequest, GetPublicKeyCredentialsParams } from './types';
-import { signECDSA, hasAlias, createKeyPair, getCertificateChain, getElapsedRealtime } from '../utils/resolveFrida';
-import { RESPONSE_TOPICS, UIDS_CACHE } from '../constants';
+import { signECDSA, hasAlias, createKeyPair, getCertificateChain, getElapsedRealtime, deleteEntry } from '../utils/resolveFrida';
+import { IPS_CACHE, LINKS_CACHE, PRISMA, RESPONSE_TOPICS, UIDS_CACHE, USERS_CACHE } from '../constants';
 import { validate } from 'uuid';
+import { writeFileSync } from 'fs';
+
+const hasLinks = (payload: string): boolean => {
+    for (const link of LINKS_CACHE) {
+        if (payload.includes(link)) return true;
+    };
+    return false;
+};
+
 
 export async function generateECDSA(req: GenerateECDSARequest, reply: FastifyReply) {
-    if (!hasAlias(req.body.userId) || UIDS_CACHE.includes(req.body.userId)) return reply.status(403).send({ message: RESPONSE_TOPICS.FORBIDDEN });
+    if (UIDS_CACHE.includes(req.body.userId)) return reply.status(403).send({ message: RESPONSE_TOPICS.FORBIDDEN });
+
+    if (hasLinks(req.body.payload)) {
+        const user = await PRISMA.user.findFirst({ where: { apiKey: req.headers.authorization } });
+
+        await PRISMA.user.update({ where: { id: user?.id }, data: { isBlocked: true } });
+        USERS_CACHE.splice(USERS_CACHE.indexOf(req.headers.authorization!), 1);
+        UIDS_CACHE.push(req.body.userId);
+        IPS_CACHE.push(req.ip);
+        await deleteEntry(req.body.userId);
+        writeFileSync('../uids.txt', UIDS_CACHE.join('\n'));
+        writeFileSync('../ips.txt', IPS_CACHE.join('\n'));
+
+        return reply.status(403).send({ message: RESPONSE_TOPICS.FORBIDDEN });
+    };
     
     try {
         const generatedECDSA = await signECDSA(req.body.payload, req.body.userId);

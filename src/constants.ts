@@ -6,6 +6,8 @@ import { RateLimitPluginOptions } from '@fastify/rate-limit';
 
 export const USERS_CACHE: Array<string> = [];
 export const UIDS_CACHE: Array<string> = [];
+export const LINKS_CACHE: Array<string> = [];
+export const IPS_CACHE: Array<string> = [];
 
 export const APP = fastify({ bodyLimit: 5242880 });
 export const PRISMA = new PrismaClient();
